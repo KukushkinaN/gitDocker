@@ -1,0 +1,64 @@
+printf "%s\n" "==Developer: Kukushkina Nadezhda " "==Program: Hard link cheking" "==This program:" "  -requests the path to the first file;" "  -requests the path to the second file;" "  -checks whether the entered file names are hard links to the same files. \n"
+startflag=0
+
+while [[ startflag -eq 0 ]]
+do
+	checkflag=0
+	foo=0
+	bar=0
+	echo "==Want to start checking? (y|Y - continue, n|N - exit)"
+	read item
+
+	case "$item" in
+	y|Y)
+		errorflag=0
+
+		for index in 1 2
+		do
+			echo "Enter $index file name..."
+			read file
+			while [ ! -f "$file" ]
+			do
+				echo "File do not exist!"
+				echo "Enter $index file name..."
+				read file
+			done
+			
+			let foo=$(stat --format=%i $file)
+			
+			if [[ checkflag -eq 0 ]]
+			then
+				bar=$foo
+				checkflag=1
+
+			elif [[ $bar -eq $foo ]]
+			then
+				echo "Entered file names are hard links to the same file."
+			else
+				errorflag=1
+				echo "Error. Entered file names aren't hard links to the same file."
+
+			fi
+
+		done
+	;;
+
+	n|N)
+		if [[ errorflag -eq 1 ]]
+		then
+			echo "Program terminated. Exit code 250."
+			exit 250;
+		else
+			echo "Program terminated."
+			exit;
+
+		fi
+	;;
+
+	*)
+		echo "Please, enter 'y|Y' or 'n|N'!"
+	;;
+	esac
+
+done
+
